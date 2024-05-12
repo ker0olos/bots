@@ -1,6 +1,6 @@
 import packs from '~/src/packs.ts';
 
-import utils, { ImageSize } from '~/src/utils.ts';
+import utils from '~/src/utils.ts';
 
 import _user from '~/src/user.ts';
 
@@ -163,7 +163,7 @@ function run(
       if (!existing || existing.userId !== user.id) {
         const message = new discord.Message();
 
-        const embed = await srch.characterEmbed(message, character, {
+        const embed = srch.characterEmbed(character, {
           description: true,
           footer: true,
           rating: false,
@@ -195,10 +195,10 @@ function run(
         ? existing?.image
         : character.images?.[0]?.url;
 
-      const characterImage = await utils.proxy(
-        characterImageUrl,
-        ImageSize.Preview,
-      );
+      // const characterImage = await utils.proxy(
+      //   characterImageUrl,
+      //   ImageSize.Preview,
+      // );
 
       let characterMessage = '';
 
@@ -216,8 +216,6 @@ function run(
         .join(' - ');
 
       const message = new discord.Message();
-
-      message.addAttachment(characterImage);
 
       const history = (await db.addChatMessage({
         guildId,
@@ -247,9 +245,7 @@ function run(
           ...history.map(({ role, content }) => ({
             user: role === 'user',
             name: role === 'user' ? userName : characterName,
-            imageUrl: role === 'user'
-              ? userImage
-              : `attachment://${characterImage.filename}`,
+            imageUrl: role === 'user' ? userImage : characterImageUrl,
             message: content,
           })),
           {
@@ -261,7 +257,7 @@ function run(
           {
             user: false,
             name: characterName,
-            imageUrl: `attachment://${characterImage.filename}`,
+            imageUrl: characterImageUrl,
             message: `${characterMessage}${finished ? '' : getSkeleton()}`,
           },
         ];

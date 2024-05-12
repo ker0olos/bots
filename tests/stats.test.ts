@@ -79,12 +79,12 @@ Deno.test('/stats', async (test) => {
       assertEquals(message.json(), {
         type: 4,
         data: {
-          attachments: [{ filename: 'spinner3.gif', id: '0' }],
+          attachments: [],
           components: [],
           embeds: [{
             type: 'rich',
             image: {
-              url: 'attachment://spinner3.gif',
+              url: 'http://localhost:8000/assets/spinner3.gif',
             },
           }],
         },
@@ -108,14 +108,14 @@ Deno.test('/stats', async (test) => {
           ) as any,
         ),
         {
-          attachments: [{ filename: 'image-url.webp', id: '0' }],
+          attachments: [],
           embeds: [
             {
               type: 'rich',
               description:
                 '<@user_id>\n\n<:star:1061016362832642098><:star:1061016362832642098><:star:1061016362832642098><:star:1061016362832642098><:no_star:1109377526662434906>',
               thumbnail: {
-                url: 'attachment://image-url.webp',
+                url: 'http://localhost:8000/external/image_url?size=thumbnail',
               },
               fields: [
                 {
@@ -255,12 +255,12 @@ Deno.test('/stats', async (test) => {
       assertEquals(message.json(), {
         type: 4,
         data: {
-          attachments: [{ filename: 'spinner3.gif', id: '0' }],
+          attachments: [],
           components: [],
           embeds: [{
             type: 'rich',
             image: {
-              url: 'attachment://spinner3.gif',
+              url: 'http://localhost:8000/assets/spinner3.gif',
             },
           }],
         },
@@ -284,14 +284,14 @@ Deno.test('/stats', async (test) => {
           ) as any,
         ),
         {
-          attachments: [{ filename: 'image-url.webp', id: '0' }],
+          attachments: [],
           embeds: [
             {
               type: 'rich',
               description:
                 '<@user_id>\n\n<:star:1061016362832642098><:star:1061016362832642098><:star:1061016362832642098><:star:1061016362832642098><:no_star:1109377526662434906>',
               thumbnail: {
-                url: 'attachment://image-url.webp',
+                url: 'http://localhost:8000/external/image_url?size=thumbnail',
               },
               fields: [
                 {
@@ -434,12 +434,12 @@ Deno.test('/stats', async (test) => {
       assertEquals(message.json(), {
         type: 4,
         data: {
-          attachments: [{ filename: 'spinner3.gif', id: '0' }],
+          attachments: [],
           components: [],
           embeds: [{
             type: 'rich',
             image: {
-              url: 'attachment://spinner3.gif',
+              url: 'http://localhost:8000/assets/spinner3.gif',
             },
           }],
         },
@@ -463,14 +463,14 @@ Deno.test('/stats', async (test) => {
           ) as any,
         ),
         {
-          attachments: [{ filename: 'image-url.webp', id: '0' }],
+          attachments: [],
           embeds: [
             {
               type: 'rich',
               description:
                 '<@another_user_id>\n\n<:star:1061016362832642098><:star:1061016362832642098><:star:1061016362832642098><:star:1061016362832642098><:no_star:1109377526662434906>',
               thumbnail: {
-                url: 'attachment://image-url.webp',
+                url: 'http://localhost:8000/external/image_url?size=thumbnail',
               },
               fields: [
                 {
@@ -588,12 +588,12 @@ Deno.test('/stats', async (test) => {
       assertEquals(message.json(), {
         type: 4,
         data: {
-          attachments: [{ filename: 'spinner3.gif', id: '0' }],
+          attachments: [],
           components: [],
           embeds: [{
             type: 'rich',
             image: {
-              url: 'attachment://spinner3.gif',
+              url: 'http://localhost:8000/assets/spinner3.gif',
             },
           }],
         },
@@ -615,7 +615,7 @@ Deno.test('/stats', async (test) => {
           ) as any,
         ),
         {
-          attachments: [{ filename: 'image-url.webp', id: '0' }],
+          attachments: [],
           components: [],
           embeds: [
             {
@@ -623,7 +623,7 @@ Deno.test('/stats', async (test) => {
               description:
                 '<:star:1061016362832642098><:no_star:1109377526662434906><:no_star:1109377526662434906><:no_star:1109377526662434906><:no_star:1109377526662434906>',
               thumbnail: {
-                url: 'attachment://image-url.webp',
+                url: 'http://localhost:8000/external/image_url?size=thumbnail',
               },
               fields: [
                 {

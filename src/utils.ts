@@ -2,19 +2,18 @@ import nacl from 'tweetnacl';
 
 import { chunk } from '$std/collections/chunk.ts';
 
-import { basename, extname } from '$std/path/mod.ts';
-import { extensionsByType } from '$std/media_types/mod.ts';
-
 import {
   captureException as _captureException,
   init as _initSentry,
 } from 'sentry';
 
+// import { LRU } from 'lru';
+
 import { json, serve, serveStatic, validateRequest } from 'sift';
 
 import { distance as levenshtein } from 'levenshtein';
 
-import { proxy as _proxy } from 'images-proxy';
+import { proxy } from 'images-proxy';
 
 import {
   RECHARGE_DAILY_TOKENS_HOURS,
@@ -23,7 +22,9 @@ import {
   STEAL_COOLDOWN_HOURS,
 } from '~/db/mod.ts';
 
-import type { Attachment } from '~/src/discord.ts';
+// const TEN_MIB = 1024 * 1024 * 10;
+
+// const lru = new LRU<{ body: ArrayBuffer; headers: Headers }>(20);
 
 export enum ImageSize {
   Preview = 'preview',
@@ -395,6 +396,51 @@ function captureException(err: Error, opts?: {
   });
 }
 
+async function handleProxy(r: Request): Promise<Response> {
+  const url = new URL(r.url);
+
+  // const key = (url.pathname + url.search)
+  //   .substring(1);
+
+  // const hit = lru.get(key);
+
+  // if (hit) {
+  //   console.log(`cache hit: ${key}`);
+
+  //   return new Response(hit.body, { headers: hit.headers });
+  // }
+
+  const imageUrl = decodeURIComponent(
+    url.pathname
+      .replace('/external/', ''),
+  );
+
+  const { format, image } = await proxy(
+    imageUrl,
+    // deno-lint-ignore no-explicit-any
+    url.searchParams.get('size') as any,
+  );
+
+  const response = new Response(image.buffer, {
+    headers: {
+      'content-type': format,
+      'content-length': `${image.byteLength}`,
+      'cache-control': `max-age=${86400 * 12}`,
+    },
+  });
+
+  // if (image.byteLength <= TEN_MIB) {
+  //   const v = {
+  //     body: image.buffer,
+  //     headers: response.headers,
+  //   };
+
+  //   lru.set(key, v);
+  // }
+
+  return response;
+}
+
 function nonNullable<T>(value: T): value is NonNullable<T> {
   return Boolean(value);
 }
@@ -446,33 +492,7 @@ function initSentry(dsn?: string): void {
   }
 }
 
-async function proxy(
-  url?: string,
-  size?: ImageSize,
-): Promise<Attachment> {
-  let filename = url ? encodeURIComponent(basename(url)) : 'default.webp';
-
-  const file = await _proxy(url ?? '', size);
-
-  if (extname(filename) === '') {
-    const ext = extensionsByType(file.format);
-
-    if (ext?.length) {
-      filename = `${filename}.${ext[0]}`;
-    }
-  }
-
-  filename = filename.replaceAll('_', '-');
-
-  return {
-    filename,
-    arrayBuffer: file.image,
-    type: file.format,
-  };
-}
-
 const utils = {
-  proxy,
   LehmerRNG,
   isWithin14Days,
   capitalize,
@@ -489,6 +509,7 @@ const utils = {
   distance,
   fetchWithRetry,
   getRandomFloat,
+  handleProxy,
   hexToInt,
   initSentry,
   json,

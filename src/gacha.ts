@@ -324,16 +324,14 @@ async function pullAnimation(
   const mediaImage = pull.media.images?.[0];
 
   const embed = new discord.Embed()
-    .setTitle(utils.wrap(mediaTitles[0]));
-
-  const mediaImageAttachment = await embed.setImageWithProxy({
-    size: ImageSize.Medium,
-    url: mediaImage?.url,
-  });
+    .setTitle(utils.wrap(mediaTitles[0]))
+    .setImage({
+      size: ImageSize.Medium,
+      url: mediaImage?.url,
+    });
 
   let message = new discord.Message()
-    .addEmbed(embed)
-    .addAttachment(mediaImageAttachment);
+    .addEmbed(embed);
 
   if (mention && userId) {
     message
@@ -348,15 +346,13 @@ async function pullAnimation(
 
     await utils.sleep(4);
 
-    const embed = new discord.Embed();
-
-    const image = embed.setImageFile(
-      `assets/public/stars/${pull.rating.stars}.gif`,
-    );
+    const embed = new discord.Embed()
+      .setImage({
+        url: `${config.origin}/assets/stars/${pull.rating.stars}.gif`,
+      });
 
     message = new discord.Message()
-      .addEmbed(embed)
-      .addAttachment(image);
+      .addEmbed(embed);
 
     if (mention && userId) {
       message
@@ -370,7 +366,7 @@ async function pullAnimation(
   }
   //
 
-  message = await search.characterMessage(pull.character, {
+  message = search.characterMessage(pull.character, {
     relations: false,
     rating: pull.rating,
     description: false,
@@ -432,7 +428,7 @@ async function pullAnimation(
     if (pings.size > 0) {
       const message = new discord.Message();
 
-      const embed = await search.characterEmbed(message, pull.character, {
+      const embed = search.characterEmbed(pull.character, {
         userId,
         mode: 'thumbnail',
         rating: true,

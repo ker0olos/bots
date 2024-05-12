@@ -32,24 +32,6 @@ const musicUrlRegex = /youtube|spotify/;
 const externalUrlRegex =
   /^(https:\/\/)?(www\.)?(youtube\.com|twitch\.tv|netflix\\.com|crunchyroll\.com|tapas\.io|webtoons\.com|amazon\.com)[\S]*$/;
 
-type CharacterEmbed = {
-  userId?: string;
-  existing?: {
-    image?: string;
-    nickname?: string;
-    rating?: number;
-    mediaId?: string;
-  };
-  suffix?: string;
-  rating?: Rating | boolean;
-  media?: {
-    title?: boolean | string;
-  };
-  mode?: 'thumbnail' | 'full';
-  description?: boolean;
-  footer?: boolean;
-};
-
 function media(
   { token, id, search, debug, guildId }: {
     token: string;
@@ -79,11 +61,11 @@ function media(
     })
     .then(async (media) => {
       if (debug) {
-        const message = await mediaDebugMessage(media);
+        const message = mediaDebugMessage(media);
         return await message.patch(token);
       }
 
-      const message = await mediaMessage(media);
+      const message = mediaMessage(media);
       return await message.patch(token);
     })
     .catch(async (err) => {
@@ -108,7 +90,7 @@ function media(
   return discord.Message.spinner();
 }
 
-async function mediaMessage(media: Media): Promise<discord.Message> {
+function mediaMessage(media: Media): discord.Message {
   const titles = packs.aliasToArray(media.title);
 
   if (!titles?.length) {
@@ -120,24 +102,22 @@ async function mediaMessage(media: Media): Promise<discord.Message> {
 
   const message = new discord.Message();
 
-  const embed = await mediaEmbed(message, media);
+  const embed = mediaEmbed(media);
 
   message.addEmbed(embed);
 
   // character embeds
   // sort characters by popularity
-  await Promise.all(
-    media.characters?.edges
-      ?.slice(0, 2)
-      .map(async (edge) => {
-        const embed = await characterEmbed(message, edge.node, {
-          mode: 'thumbnail',
-          rating: false,
-        });
+  media.characters?.edges
+    ?.slice(0, 2)
+    .forEach((edge) => {
+      const embed = characterEmbed(edge.node, {
+        mode: 'thumbnail',
+        rating: false,
+      });
 
-        message.addEmbed(embed);
-      }) ?? [],
-  );
+      message.addEmbed(embed);
+    });
 
   if (media.trailer?.site === 'youtube') {
     const component = new discord.Component()
@@ -208,13 +188,12 @@ async function mediaMessage(media: Media): Promise<discord.Message> {
   return message.addComponents([...linksGroup, ...musicGroup]);
 }
 
-async function mediaEmbed(
-  message: discord.Message,
+function mediaEmbed(
   media: Media | DisaggregatedMedia,
   options?: {
     mode?: 'thumbnail' | 'full';
   },
-): Promise<discord.Embed> {
+): discord.Embed {
   options ??= {
     mode: 'full',
   };
@@ -232,11 +211,9 @@ async function mediaEmbed(
   const embed = new discord.Embed();
 
   if (options.mode === 'full') {
-    const attachment = await embed.setImageWithProxy({ url: image });
-    message.addAttachment(attachment);
+    embed.setImage({ url: image });
   } else {
-    const attachment = await embed.setThumbnailWithProxy({ url: image });
-    message.addAttachment(attachment);
+    embed.setThumbnail({ url: image });
   }
 
   const description = options.mode === 'thumbnail'
@@ -250,20 +227,19 @@ async function mediaEmbed(
     .setDescription(description);
 }
 
-async function mediaDebugMessage(
+function mediaDebugMessage(
   media: Media | DisaggregatedMedia,
-): Promise<discord.Message> {
+): discord.Message | discord.Message {
   const titles = packs.aliasToArray(media.title);
 
   if (!titles?.length) {
     throw new Error('404');
   }
 
-  const message = new discord.Message();
-
   const embed = new discord.Embed()
     .setTitle(titles.shift())
     .setDescription(titles.join('\n'))
+    .setThumbnail({ url: media.images?.[0]?.url })
     .addField({ name: 'Id', value: `${media.packId}:${media.id}` })
     .addField({
       name: 'Type',
@@ -281,13 +257,7 @@ async function mediaDebugMessage(
       inline: true,
     });
 
-  const image = await embed.setThumbnailWithProxy({
-    url: media.images?.[0]?.url,
-  });
-
-  return message
-    .addEmbed(embed)
-    .addAttachment(image);
+  return new discord.Message().addEmbed(embed);
 }
 
 function character(
@@ -337,11 +307,11 @@ function character(
       }
 
       if (debug) {
-        const message = await characterDebugMessage(character);
+        const message = characterDebugMessage(character);
         return await message.patch(token);
       }
 
-      const message = await characterMessage(character, {
+      const message = characterMessage(character, {
         existing: existing ?? undefined,
         userId: existing?.userId,
       });
@@ -384,22 +354,21 @@ function character(
   return discord.Message.spinner();
 }
 
-async function characterMessage(
+function characterMessage(
   character: Character | DisaggregatedCharacter,
-  options?: CharacterEmbed & {
+  options?: Parameters<typeof characterEmbed>[1] & {
     externalLinks?: boolean;
     relations?: boolean | DisaggregatedMedia[];
   },
-): Promise<discord.Message> {
+): discord.Message {
   options = {
     externalLinks: true,
     relations: true,
     ...options,
   };
 
-  const message = new discord.Message();
-
-  message.addEmbed(await characterEmbed(message, character, options));
+  const message = new discord.Message()
+    .addEmbed(characterEmbed(character, options));
 
   const group: discord.Component[] = [];
 
@@ -419,7 +388,6 @@ async function characterMessage(
 
   // relation components
   // sort media by popularity
-
   if (Array.isArray(options.relations)) {
     relations = options.relations.slice(0, 1);
   } else if (
@@ -444,8 +412,7 @@ async function characterMessage(
   return message.addComponents(group);
 }
 
-async function characterEmbed(
-  message: discord.Message,
+function characterEmbed(
   character: Character | DisaggregatedCharacter,
   options?: {
     userId?: string;
@@ -464,14 +431,12 @@ async function characterEmbed(
     description?: boolean;
     footer?: boolean;
   },
-): Promise<discord.Embed> {
+): discord.Embed {
   options = {
-    ...{
-      mode: 'full',
-      rating: true,
-      description: true,
-      footer: true,
-    },
+    mode: 'full',
+    rating: true,
+    description: true,
+    footer: true,
     ...options,
   };
 
@@ -491,11 +456,9 @@ async function characterEmbed(
   const aliasWrapped = utils.wrap(alias, wrapWidth);
 
   if (options.mode === 'full') {
-    const attachment = await embed.setImageWithProxy({ url: image?.url });
-    message.addAttachment(attachment);
+    embed.setImage({ url: image?.url });
   } else {
-    const attachment = await embed.setThumbnailWithProxy({ url: image?.url });
-    message.addAttachment(attachment);
+    embed.setThumbnail({ url: image?.url });
   }
 
   if (options?.existing?.rating) {
@@ -573,9 +536,7 @@ async function characterEmbed(
   return embed;
 }
 
-async function characterDebugMessage(
-  character: Character,
-): Promise<discord.Message> {
+function characterDebugMessage(character: Character): discord.Message {
   const media = character.media?.edges?.[0];
 
   const role = media?.role;
@@ -588,11 +549,10 @@ async function characterDebugMessage(
 
   const titles = packs.aliasToArray(character.name);
 
-  const message = new discord.Message();
-
   const embed = new discord.Embed()
     .setTitle(titles.splice(0, 1)[0])
     .setDescription(titles.join('\n'))
+    .setThumbnail({ url: character.images?.[0]?.url })
     .addField({ name: 'Id', value: `${character.packId}:${character.id}` })
     .addField({
       name: 'Rating',
@@ -620,10 +580,6 @@ async function characterDebugMessage(
       inline: true,
     });
 
-  const image = await embed.setThumbnailWithProxy({
-    url: character.images?.[0]?.url,
-  });
-
   if (!media) {
     embed.addField({
       name: '**WARN**',
@@ -632,7 +588,7 @@ async function characterDebugMessage(
     });
   }
 
-  return message.addEmbed(embed).addAttachment(image);
+  return new discord.Message().addEmbed(embed);
 }
 
 function mediaCharacters(
@@ -685,7 +641,7 @@ function mediaCharacters(
       //   db.findCharacter(guildId, `${character.packId}:${character.id}`),
       // ]);
 
-      const message = await characterMessage(character, {
+      const message = characterMessage(character, {
         rating: new Rating({ role, popularity: media.popularity }),
         relations: false,
         description: true,
@@ -693,9 +649,7 @@ function mediaCharacters(
         footer: true,
         existing: existing ?? undefined,
         userId: existing?.userId,
-      });
-
-      message.addComponents([
+      }).addComponents([
         new discord.Component()
           .setId('media', `${media.packId}:${media.id}`)
           .setLabel(`/${media.type.toLowerCase()}`),

@@ -334,7 +334,7 @@ function preAcquire(
       if (!existing) {
         const message = new discord.Message();
 
-        const embed = await search.characterEmbed(message, character, {
+        const embed = search.characterEmbed(character, {
           mode: 'thumbnail',
           media: { title: false },
           description: false,
@@ -353,7 +353,7 @@ function preAcquire(
       if (existing.userId !== userId) {
         const message = new discord.Message();
 
-        const embed = await search.characterEmbed(message, character, {
+        const embed = search.characterEmbed(character, {
           mode: 'thumbnail',
           media: { title: false },
           description: false,
@@ -380,7 +380,7 @@ function preAcquire(
 
       const charId = `${character.packId}:${character.id}`;
 
-      const embed = await search.characterEmbed(message, character, {
+      const embed = search.characterEmbed(character, {
         mode: 'thumbnail',
         media: { title: false },
         description: false,

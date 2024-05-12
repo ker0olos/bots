@@ -144,12 +144,12 @@ function pre({ token, userId, guildId, targetId, give, take }: {
         ? (await db.getUserCharacters(targetId, guildId))
         : undefined;
 
-      const giveEmbeds = await Promise.all(giveCharacters.map((character) => {
+      const giveEmbeds = giveCharacters.map((character) => {
         const i = giveCollection.findIndex(({ characterId }) =>
           `${character.packId}:${character.id}` === characterId
         );
 
-        return search.characterEmbed(message, character, {
+        return search.characterEmbed(character, {
           footer: false,
           description: false,
           media: { title: true },
@@ -161,7 +161,7 @@ function pre({ token, userId, guildId, targetId, give, take }: {
             }
             : undefined,
         });
-      }));
+      });
 
       const giveParty = ([
         userInventory.party.member1?.characterId,
@@ -200,12 +200,12 @@ function pre({ token, userId, guildId, targetId, give, take }: {
       }
 
       if (takeCollection) {
-        const takeEmbeds = await Promise.all(takeCharacters.map((character) => {
+        const takeEmbeds = takeCharacters.map((character) => {
           const i = takeCollection.findIndex(({ characterId }) =>
             `${character.packId}:${character.id}` === characterId
           );
 
-          return search.characterEmbed(message, character, {
+          return search.characterEmbed(character, {
             footer: false,
             description: false,
             media: { title: true },
@@ -217,7 +217,7 @@ function pre({ token, userId, guildId, targetId, give, take }: {
               }
               : {},
           });
-        }));
+        });
 
         const _takeParty = targetInventory.party;
 
@@ -420,19 +420,17 @@ function give({
         ),
       );
 
-      await Promise.all(giveCharacters.map(async (character) => {
-        const embed = await search.characterEmbed(newMessage, character, {
+      giveCharacters.forEach((character) => {
+        const embed = search.characterEmbed(character, {
           rating: true,
           mode: 'thumbnail',
           footer: false,
           description: false,
           media: { title: true },
-        });
-
-        embed.addField({ value: `${discord.emotes.add}` });
+        }).addField({ value: `${discord.emotes.add}` });
 
         newMessage.addEmbed(embed);
-      }));
+      });
 
       if (giveCharacters.length === 1) {
         const characterId = `${giveCharacters[0].packId}:${
@@ -563,9 +561,8 @@ function accepted({
         ),
       );
 
-      await Promise.all(takeCharacters.map(async (character) => {
-        const embed = await search.characterEmbed(
-          updateMessage,
+      takeCharacters.forEach((character) => {
+        const embed = search.characterEmbed(
           character,
           {
             rating: true,
@@ -574,16 +571,13 @@ function accepted({
             description: false,
             media: { title: true },
           },
-        );
-
-        embed.addField({ value: `${discord.emotes.add}` });
+        ).addField({ value: `${discord.emotes.add}` });
 
         updateMessage.addEmbed(embed);
-      }));
+      });
 
-      await Promise.all(giveCharacters.map(async (character) => {
-        const embed = await search.characterEmbed(
-          updateMessage,
+      giveCharacters.forEach((character) => {
+        const embed = search.characterEmbed(
           character,
           {
             rating: true,
@@ -592,12 +586,10 @@ function accepted({
             description: false,
             media: { title: true },
           },
-        );
-
-        embed.addField({ value: `${discord.emotes.remove}` });
+        ).addField({ value: `${discord.emotes.remove}` });
 
         updateMessage.addEmbed(embed);
-      }));
+      });
 
       await updateMessage.patch(token);
 

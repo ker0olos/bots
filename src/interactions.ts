@@ -647,25 +647,25 @@ export const handler = async (r: Request) => {
           case 'merge': {
             const target = options['target'] as number;
 
-            return merge.synthesize({
+            return (await merge.synthesize({
               token,
               guildId,
               userId: member.user.id,
               mode: 'target',
               target,
-            }).send();
+            })).send();
           }
           case 'automerge': {
             // deno-lint-ignore no-non-null-assertion
             switch (subcommand!) {
               case 'min':
               case 'max':
-                return merge.synthesize({
+                return (await merge.synthesize({
                   token,
                   guildId,
                   userId: member.user.id,
                   mode: subcommand,
-                }).send();
+                })).send();
               default:
                 break;
             }
@@ -1481,6 +1481,10 @@ export async function start(): Promise<void> {
     '/api/publish': communityAPI.publish,
     '/api/popular': communityAPI.popular,
     '/api/pack/:packId+': communityAPI.pack,
+    '/external/*': utils.handleProxy,
+    '/assets/:filename+': utils.serveStatic('../assets/public', {
+      baseUrl: import.meta.url,
+    }),
     '/invite': () =>
       Response.redirect(
         `https://discord.com/api/oauth2/authorize?client_id=${config.appId}&scope=applications.commands%20bot`,

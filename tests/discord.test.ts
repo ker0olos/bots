@@ -4,9 +4,11 @@ import { assert, assertEquals } from '$std/assert/mod.ts';
 
 import { assertSpyCall, assertSpyCalls, stub } from '$std/testing/mock.ts';
 
-import utils from '~/src/utils.ts';
+import utils, { ImageSize } from '~/src/utils.ts';
 
 import * as discord from '~/src/discord.ts';
+
+import config from '~/src/config.ts';
 
 Deno.test('interactions', async (test) => {
   await test.step('command', () => {
@@ -195,6 +197,8 @@ Deno.test('embeds', () => {
     .setDescription('abc')
     .setUrl('abc')
     .setColor('#3E5F8A')
+    .setThumbnail({ url: 'abc' })
+    .setImage({ url: 'abc' })
     .setFooter({ text: 'a', icon_url: 'b' });
 
   assertEquals(embed.json().type, 'rich');
@@ -211,6 +215,16 @@ Deno.test('embeds', () => {
   assertEquals(embed.json().url, 'abc');
 
   assertEquals(embed.json().color!, 4087690);
+
+  assertEquals(
+    embed.json().thumbnail!.url,
+    'undefined/external/abc?size=thumbnail',
+  );
+
+  assertEquals(
+    embed.json().image!.url,
+    'undefined/external/abc',
+  );
 
   assertEquals(embed.json().footer!.text, 'a');
   assertEquals(embed.json().footer!.icon_url, 'b');
@@ -1124,113 +1138,172 @@ Deno.test('emotes', async (test) => {
 });
 
 Deno.test('images', async (test) => {
-  await test.step('set image url', () => {
+  await test.step('no proxy no default', () => {
     const embed = new discord.Embed();
 
-    embed.setImageUrl('image_url');
+    embed.setImage({
+      default: false,
+      proxy: false,
+      size: ImageSize.Medium,
+      url: 'url',
+    });
 
     assertEquals(
       embed.json().image!.url,
-      'image_url',
+      'url',
     );
   });
 
-  await test.step('set thumbnail url', () => {
+  await test.step('attachment', () => {
     const embed = new discord.Embed();
 
-    embed.setThumbnailUrl('image_url');
+    embed.setImage({
+      default: true,
+      proxy: true,
+      size: ImageSize.Medium,
+      url: 'attachment://image',
+    });
+
+    assertEquals(
+      embed.json().image!.url,
+      'attachment://image',
+    );
+  });
+
+  await test.step('origin', () => {
+    try {
+      config.origin = 'http://localhost:8080';
+
+      const embed = new discord.Embed();
+
+      embed.setImage({
+        default: true,
+        proxy: true,
+        size: ImageSize.Medium,
+        url: 'http://localhost:8080/image',
+      });
+
+      assertEquals(
+        embed.json().image!.url,
+        'http://localhost:8080/image',
+      );
+    } finally {
+      delete config.origin;
+    }
+  });
+
+  await test.step('no default', () => {
+    const embed = new discord.Embed();
+
+    embed.setImage({
+      default: false,
+      proxy: true,
+      size: ImageSize.Large,
+      url: 'url',
+    });
+
+    assertEquals(
+      embed.json().image!.url,
+      'undefined/external/url',
+    );
+  });
+
+  await test.step('no proxy', () => {
+    const embed = new discord.Embed();
+
+    embed.setImage({
+      default: true,
+      proxy: false,
+      size: ImageSize.Large,
+      url: 'url',
+    });
+
+    assertEquals(
+      embed.json().image!.url,
+      'undefined/external/url',
+    );
+  });
+});
+
+Deno.test('thumbnails', async (test) => {
+  await test.step('no proxy no default', () => {
+    const embed = new discord.Embed();
+
+    embed.setThumbnail({
+      default: false,
+      proxy: false,
+      url: 'url',
+    });
 
     assertEquals(
       embed.json().thumbnail!.url,
-      'image_url',
+      'url',
     );
   });
 
-  await test.step('set image file', () => {
+  await test.step('attachment', () => {
     const embed = new discord.Embed();
 
-    const attachment = embed.setImageFile('assets/public/spinner.gif');
-
-    assertEquals(
-      embed.json().image!.url,
-      'attachment://spinner.gif',
-    );
-
-    assertEquals(attachment.filename, 'spinner.gif');
-    assertEquals(attachment.type, 'image/gif');
-  });
-
-  await test.step('set image attachment proxy', async () => {
-    const embed = new discord.Embed();
-
-    const attachment = await embed.setImageWithProxy(
-      {
-        url:
-          'https://s4.anilist.co/file/anilistcdn/character/large/b89363-mm21Ll4NegUD.png',
-      },
-    );
-
-    assertEquals(
-      embed.json().image!.url,
-      'attachment://b89363-mm21Ll4NegUD.png',
-    );
-
-    assertEquals(attachment?.filename, 'b89363-mm21Ll4NegUD.png');
-    assertEquals(attachment?.type, 'image/png');
-  });
-
-  await test.step('set thumbnail attachment proxy', async () => {
-    const embed = new discord.Embed();
-
-    const attachment = await embed.setThumbnailWithProxy(
-      {
-        url:
-          'https://s4.anilist.co/file/anilistcdn/character/large/b89363-mm21Ll4NegUD.png',
-      },
-    );
+    embed.setThumbnail({
+      default: true,
+      proxy: true,
+      url: 'attachment://image',
+    });
 
     assertEquals(
       embed.json().thumbnail!.url,
-      'attachment://b89363-mm21Ll4NegUD.png',
+      'attachment://image',
     );
-
-    assertEquals(attachment?.filename, 'b89363-mm21Ll4NegUD.png');
-    assertEquals(attachment?.type, 'image/png');
   });
 
-  await test.step('set image attachment proxy (default)', async () => {
-    const embed = new discord.Embed();
+  await test.step('origin', () => {
+    try {
+      config.origin = 'http://localhost:8080';
 
-    const attachment = await embed.setImageWithProxy(
-      {
-        url: '',
-      },
-    );
+      const embed = new discord.Embed();
 
-    assertEquals(
-      embed.json().image!.url,
-      'attachment://default.webp',
-    );
+      embed.setThumbnail({
+        default: true,
+        proxy: true,
+        url: 'http://localhost:8080/image',
+      });
 
-    assertEquals(attachment?.filename, 'default.webp');
-    assertEquals(attachment?.type, 'image/webp');
+      assertEquals(
+        embed.json().thumbnail!.url,
+        'http://localhost:8080/image',
+      );
+    } finally {
+      delete config.origin;
+    }
   });
 
-  await test.step('set thumbnail attachment proxy (default)', async () => {
+  await test.step('no default', () => {
     const embed = new discord.Embed();
 
-    const attachment = await embed.setThumbnailWithProxy(
-      {
-        url: '',
-      },
-    );
+    embed.setThumbnail({
+      default: false,
+      proxy: true,
+      url: 'url',
+    });
 
     assertEquals(
       embed.json().thumbnail!.url,
-      'attachment://default.webp',
+      'undefined/external/url?size=thumbnail',
     );
+  });
 
-    assertEquals(attachment?.filename, 'default.webp');
-    assertEquals(attachment?.type, 'image/webp');
+  await test.step('no proxy', () => {
+    const embed = new discord.Embed();
+
+    embed.setThumbnail({
+      default: true,
+      proxy: false,
+      url: 'url',
+    });
+
+    assertEquals(
+      embed.json().thumbnail!.url,
+      'undefined/external/url?size=thumbnail',
+    );
   });
 });

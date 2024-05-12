@@ -94,12 +94,12 @@ Deno.test('give', async (test) => {
       assertEquals(message.json(), {
         type: 4,
         data: {
-          attachments: [{ filename: 'spinner3.gif', id: '0' }],
+          attachments: [],
           components: [],
           embeds: [{
             type: 'rich',
             image: {
-              url: 'attachment://spinner3.gif',
+              url: 'http://localhost:8000/assets/spinner3.gif',
             },
           }],
         },
@@ -147,7 +147,7 @@ Deno.test('give', async (test) => {
         ),
         {
           content: '<@target_id>',
-          attachments: [{ filename: 'default.webp', id: '0' }],
+          attachments: [],
           components: [
             {
               components: [
@@ -187,7 +187,7 @@ Deno.test('give', async (test) => {
                 },
               ],
               thumbnail: {
-                url: 'attachment://default.webp',
+                url: 'http://localhost:8000/external/?size=thumbnail',
               },
             },
           ],
@@ -283,12 +283,12 @@ Deno.test('give', async (test) => {
       assertEquals(message.json(), {
         type: 4,
         data: {
-          attachments: [{ filename: 'spinner3.gif', id: '0' }],
+          attachments: [],
           components: [],
           embeds: [{
             type: 'rich',
             image: {
-              url: 'attachment://spinner3.gif',
+              url: 'http://localhost:8000/assets/spinner3.gif',
             },
           }],
         },
@@ -410,12 +410,12 @@ Deno.test('give', async (test) => {
       assertEquals(message.json(), {
         type: 4,
         data: {
-          attachments: [{ filename: 'spinner3.gif', id: '0' }],
+          attachments: [],
           components: [],
           embeds: [{
             type: 'rich',
             image: {
-              url: 'attachment://spinner3.gif',
+              url: 'http://localhost:8000/assets/spinner3.gif',
             },
           }],
         },
@@ -537,12 +537,12 @@ Deno.test('give', async (test) => {
       assertEquals(message.json(), {
         type: 4,
         data: {
-          attachments: [{ filename: 'spinner3.gif', id: '0' }],
+          attachments: [],
           components: [],
           embeds: [{
             type: 'rich',
             image: {
-              url: 'attachment://spinner3.gif',
+              url: 'http://localhost:8000/assets/spinner3.gif',
             },
           }],
         },
@@ -688,12 +688,12 @@ Deno.test('trade', async (test) => {
       assertEquals(message.json(), {
         type: 4,
         data: {
-          attachments: [{ filename: 'spinner3.gif', id: '0' }],
+          attachments: [],
           components: [],
           embeds: [{
             type: 'rich',
             image: {
-              url: 'attachment://spinner3.gif',
+              url: 'http://localhost:8000/assets/spinner3.gif',
             },
           }],
         },
@@ -716,12 +716,7 @@ Deno.test('trade', async (test) => {
         ),
         {
           content: '<@user_id>',
-          attachments: [
-            { filename: 'default.webp', id: '0' },
-            { filename: 'default.webp', id: '1' },
-            { filename: 'default.webp', id: '2' },
-            { filename: 'default.webp', id: '3' },
-          ],
+          attachments: [],
           components: [],
           embeds: [
             {
@@ -743,7 +738,7 @@ Deno.test('trade', async (test) => {
                 },
               ],
               thumbnail: {
-                url: 'attachment://default.webp',
+                url: 'http://localhost:8000/external/?size=thumbnail',
               },
             },
             {
@@ -761,7 +756,7 @@ Deno.test('trade', async (test) => {
                 },
               ],
               thumbnail: {
-                url: 'attachment://default.webp',
+                url: 'http://localhost:8000/external/?size=thumbnail',
               },
             },
             {
@@ -779,7 +774,7 @@ Deno.test('trade', async (test) => {
                 },
               ],
               thumbnail: {
-                url: 'attachment://default.webp',
+                url: 'http://localhost:8000/external/?size=thumbnail',
               },
             },
             {
@@ -797,7 +792,7 @@ Deno.test('trade', async (test) => {
                 },
               ],
               thumbnail: {
-                url: 'attachment://default.webp',
+                url: 'http://localhost:8000/external/?size=thumbnail',
               },
             },
           ],
@@ -938,12 +933,12 @@ Deno.test('trade', async (test) => {
       assertEquals(message.json(), {
         type: 4,
         data: {
-          attachments: [{ filename: 'spinner3.gif', id: '0' }],
+          attachments: [],
           components: [],
           embeds: [{
             type: 'rich',
             image: {
-              url: 'attachment://spinner3.gif',
+              url: 'http://localhost:8000/assets/spinner3.gif',
             },
           }],
         },
@@ -1088,12 +1083,12 @@ Deno.test('trade', async (test) => {
       assertEquals(message.json(), {
         type: 4,
         data: {
-          attachments: [{ filename: 'spinner3.gif', id: '0' }],
+          attachments: [],
           components: [],
           embeds: [{
             type: 'rich',
             image: {
-              url: 'attachment://spinner3.gif',
+              url: 'http://localhost:8000/assets/spinner3.gif',
             },
           }],
         },
@@ -1238,12 +1233,12 @@ Deno.test('trade', async (test) => {
       assertEquals(message.json(), {
         type: 4,
         data: {
-          attachments: [{ filename: 'spinner3.gif', id: '0' }],
+          attachments: [],
           components: [],
           embeds: [{
             type: 'rich',
             image: {
-              url: 'attachment://spinner3.gif',
+              url: 'http://localhost:8000/assets/spinner3.gif',
             },
           }],
         },
@@ -1381,12 +1376,12 @@ Deno.test('/give', async (test) => {
       assertEquals(message.json(), {
         type: 4,
         data: {
-          attachments: [{ filename: 'spinner3.gif', id: '0' }],
+          attachments: [],
           components: [],
           embeds: [{
             type: 'rich',
             image: {
-              url: 'attachment://spinner3.gif',
+              url: 'http://localhost:8000/assets/spinner3.gif',
             },
           }],
         },
@@ -1410,17 +1405,14 @@ Deno.test('/give', async (test) => {
           ) as any,
         ),
         {
-          attachments: [
-            { filename: 'image-url.webp', id: '0' },
-            { filename: 'image-url2.webp', id: '1' },
-          ],
+          attachments: [],
           embeds: [
             {
               type: 'rich',
               description:
                 '<:star:1061016362832642098><:star:1061016362832642098><:no_star:1109377526662434906><:no_star:1109377526662434906><:no_star:1109377526662434906>',
               thumbnail: {
-                url: 'attachment://image-url.webp',
+                url: 'http://localhost:8000/external/image_url?size=thumbnail',
               },
               fields: [
                 {
@@ -1438,7 +1430,7 @@ Deno.test('/give', async (test) => {
               description:
                 '<:star:1061016362832642098><:star:1061016362832642098><:no_star:1109377526662434906><:no_star:1109377526662434906><:no_star:1109377526662434906>',
               thumbnail: {
-                url: 'attachment://image-url2.webp',
+                url: 'http://localhost:8000/external/image_url2?size=thumbnail',
               },
               fields: [
                 {
@@ -1598,12 +1590,12 @@ Deno.test('/give', async (test) => {
       assertEquals(message.json(), {
         type: 4,
         data: {
-          attachments: [{ filename: 'spinner3.gif', id: '0' }],
+          attachments: [],
           components: [],
           embeds: [{
             type: 'rich',
             image: {
-              url: 'attachment://spinner3.gif',
+              url: 'http://localhost:8000/assets/spinner3.gif',
             },
           }],
         },
@@ -1627,10 +1619,7 @@ Deno.test('/give', async (test) => {
           ) as any,
         ),
         {
-          attachments: [
-            { filename: 'image-url.webp', id: '0' },
-            { filename: 'image-url2.webp', id: '1' },
-          ],
+          attachments: [],
           components: [],
           embeds: [
             {
@@ -1642,7 +1631,7 @@ Deno.test('/give', async (test) => {
               description:
                 '<:star:1061016362832642098><:no_star:1109377526662434906><:no_star:1109377526662434906><:no_star:1109377526662434906><:no_star:1109377526662434906>',
               thumbnail: {
-                url: 'attachment://image-url.webp',
+                url: 'http://localhost:8000/external/image_url?size=thumbnail',
               },
               fields: [
                 {
@@ -1660,7 +1649,7 @@ Deno.test('/give', async (test) => {
               description:
                 '<:star:1061016362832642098><:no_star:1109377526662434906><:no_star:1109377526662434906><:no_star:1109377526662434906><:no_star:1109377526662434906>',
               thumbnail: {
-                url: 'attachment://image-url2.webp',
+                url: 'http://localhost:8000/external/image_url2?size=thumbnail',
               },
               fields: [
                 {
@@ -1784,12 +1773,12 @@ Deno.test('/give', async (test) => {
       assertEquals(message.json(), {
         type: 4,
         data: {
-          attachments: [{ filename: 'spinner3.gif', id: '0' }],
+          attachments: [],
           components: [],
           embeds: [{
             type: 'rich',
             image: {
-              url: 'attachment://spinner3.gif',
+              url: 'http://localhost:8000/assets/spinner3.gif',
             },
           }],
         },
@@ -1813,10 +1802,7 @@ Deno.test('/give', async (test) => {
           ) as any,
         ),
         {
-          attachments: [
-            { filename: 'image-url.webp', id: '0' },
-            { filename: 'image-url2.webp', id: '1' },
-          ],
+          attachments: [],
           components: [],
           embeds: [
             {
@@ -1828,7 +1814,7 @@ Deno.test('/give', async (test) => {
               description:
                 '<:star:1061016362832642098><:star:1061016362832642098><:no_star:1109377526662434906><:no_star:1109377526662434906><:no_star:1109377526662434906>',
               thumbnail: {
-                url: 'attachment://image-url.webp',
+                url: 'http://localhost:8000/external/image_url?size=thumbnail',
               },
               fields: [
                 {
@@ -1846,7 +1832,7 @@ Deno.test('/give', async (test) => {
               description:
                 '<:star:1061016362832642098><:star:1061016362832642098><:no_star:1109377526662434906><:no_star:1109377526662434906><:no_star:1109377526662434906>',
               thumbnail: {
-                url: 'attachment://image-url2.webp',
+                url: 'http://localhost:8000/external/image_url2?size=thumbnail',
               },
               fields: [
                 {
@@ -1956,12 +1942,12 @@ Deno.test('/trade', async (test) => {
       assertEquals(message.json(), {
         type: 4,
         data: {
-          attachments: [{ filename: 'spinner3.gif', id: '0' }],
+          attachments: [],
           components: [],
           embeds: [{
             type: 'rich',
             image: {
-              url: 'attachment://spinner3.gif',
+              url: 'http://localhost:8000/assets/spinner3.gif',
             },
           }],
         },
@@ -1986,17 +1972,14 @@ Deno.test('/trade', async (test) => {
         ),
         {
           content: '<@another_user_id>',
-          attachments: [
-            { filename: 'image-url.webp', id: '0' },
-            { filename: 'image-url.webp', id: '1' },
-          ],
+          attachments: [],
           embeds: [
             {
               type: 'rich',
               description:
                 '<:star:1061016362832642098><:star:1061016362832642098><:no_star:1109377526662434906><:no_star:1109377526662434906><:no_star:1109377526662434906>',
               thumbnail: {
-                url: 'attachment://image-url.webp',
+                url: 'http://localhost:8000/external/image_url?size=thumbnail',
               },
               fields: [
                 {
@@ -2014,7 +1997,7 @@ Deno.test('/trade', async (test) => {
               description:
                 '<:star:1061016362832642098><:star:1061016362832642098><:no_star:1109377526662434906><:no_star:1109377526662434906><:no_star:1109377526662434906>',
               thumbnail: {
-                url: 'attachment://image-url.webp',
+                url: 'http://localhost:8000/external/image_url?size=thumbnail',
               },
               fields: [
                 {
@@ -2172,12 +2155,12 @@ Deno.test('/trade', async (test) => {
       assertEquals(message.json(), {
         type: 4,
         data: {
-          attachments: [{ filename: 'spinner3.gif', id: '0' }],
+          attachments: [],
           components: [],
           embeds: [{
             type: 'rich',
             image: {
-              url: 'attachment://spinner3.gif',
+              url: 'http://localhost:8000/assets/spinner3.gif',
             },
           }],
         },
@@ -2202,17 +2185,14 @@ Deno.test('/trade', async (test) => {
         ),
         {
           content: '<@another_user_id>',
-          attachments: [
-            { filename: 'image-url.webp', id: '0' },
-            { filename: 'image-url.webp', id: '1' },
-          ],
+          attachments: [],
           embeds: [
             {
               type: 'rich',
               description:
                 '<:star:1061016362832642098><:star:1061016362832642098><:no_star:1109377526662434906><:no_star:1109377526662434906><:no_star:1109377526662434906>',
               thumbnail: {
-                url: 'attachment://image-url.webp',
+                url: 'http://localhost:8000/external/image_url?size=thumbnail',
               },
               fields: [
                 {
@@ -2230,7 +2210,7 @@ Deno.test('/trade', async (test) => {
               description:
                 '<:star:1061016362832642098><:star:1061016362832642098><:no_star:1109377526662434906><:no_star:1109377526662434906><:no_star:1109377526662434906>',
               thumbnail: {
-                url: 'attachment://image-url.webp',
+                url: 'http://localhost:8000/external/image_url?size=thumbnail',
               },
               fields: [
                 {
@@ -2382,12 +2362,12 @@ Deno.test('/trade', async (test) => {
       assertEquals(message.json(), {
         type: 4,
         data: {
-          attachments: [{ filename: 'spinner3.gif', id: '0' }],
+          attachments: [],
           components: [],
           embeds: [{
             type: 'rich',
             image: {
-              url: 'attachment://spinner3.gif',
+              url: 'http://localhost:8000/assets/spinner3.gif',
             },
           }],
         },
@@ -2411,10 +2391,7 @@ Deno.test('/trade', async (test) => {
           ) as any,
         ),
         {
-          attachments: [
-            { filename: 'image-url.webp', id: '0' },
-            { filename: 'image-url.webp', id: '1' },
-          ],
+          attachments: [],
           components: [],
           embeds: [
             {
@@ -2426,7 +2403,7 @@ Deno.test('/trade', async (test) => {
               description:
                 '<:star:1061016362832642098><:no_star:1109377526662434906><:no_star:1109377526662434906><:no_star:1109377526662434906><:no_star:1109377526662434906>',
               thumbnail: {
-                url: 'attachment://image-url.webp',
+                url: 'http://localhost:8000/external/image_url?size=thumbnail',
               },
               fields: [
                 {
@@ -2539,12 +2516,12 @@ Deno.test('/trade', async (test) => {
       assertEquals(message.json(), {
         type: 4,
         data: {
-          attachments: [{ filename: 'spinner3.gif', id: '0' }],
+          attachments: [],
           components: [],
           embeds: [{
             type: 'rich',
             image: {
-              url: 'attachment://spinner3.gif',
+              url: 'http://localhost:8000/assets/spinner3.gif',
             },
           }],
         },
@@ -2568,11 +2545,8 @@ Deno.test('/trade', async (test) => {
           ) as any,
         ),
         {
+          attachments: [],
           components: [],
-          attachments: [
-            { filename: 'image-url.webp', id: '0' },
-            { filename: 'image-url.webp', id: '1' },
-          ],
           embeds: [
             {
               type: 'rich',
@@ -2584,7 +2558,7 @@ Deno.test('/trade', async (test) => {
               description:
                 '<:star:1061016362832642098><:star:1061016362832642098><:no_star:1109377526662434906><:no_star:1109377526662434906><:no_star:1109377526662434906>',
               thumbnail: {
-                url: 'attachment://image-url.webp',
+                url: 'http://localhost:8000/external/image_url?size=thumbnail',
               },
               fields: [
                 {
@@ -2668,12 +2642,12 @@ Deno.test('/trade', async (test) => {
       assertEquals(message.json(), {
         type: 4,
         data: {
-          attachments: [{ filename: 'spinner3.gif', id: '0' }],
+          attachments: [],
           components: [],
           embeds: [{
             type: 'rich',
             image: {
-              url: 'attachment://spinner3.gif',
+              url: 'http://localhost:8000/assets/spinner3.gif',
             },
           }],
         },

@@ -54,10 +54,12 @@ async function embed({ guildId, party, locale }: {
     packs.characters({ ids: ids.filter(utils.nonNullable), guildId }),
   ]);
 
-  const embeds = await Promise.all(ids.map(async (characterId, i) => {
+  ids.forEach((characterId, i) => {
     if (!characterId) {
-      return new discord.Embed()
-        .setDescription(i18n.get('unassigned', locale));
+      message.addEmbed(new discord.Embed()
+        .setDescription(i18n.get('unassigned', locale)));
+
+      return;
     }
 
     const character = characters.find(({ packId, id }) =>
@@ -75,12 +77,14 @@ async function embed({ guildId, party, locale }: {
       // deno-lint-ignore no-non-null-assertion
       packs.isDisabled(mediaIds[i]!, guildId)
     ) {
-      return new discord.Embed().setDescription(
-        i18n.get('character-disabled', locale),
+      return message.addEmbed(
+        new discord.Embed().setDescription(
+          i18n.get('character-disabled', locale),
+        ),
       );
     }
 
-    const embed = await srch.characterEmbed(message, character, {
+    const embed = srch.characterEmbed(character, {
       mode: 'thumbnail',
       media: { title: packs.aliasToArray(media[mediaIndex].title)[0] },
       rating: new Rating({ stars: members[i]?.rating }),
@@ -96,10 +100,8 @@ async function embed({ guildId, party, locale }: {
       text: `${i18n.get('lvl', locale)} ${members[i]?.combat?.level ?? 1}`,
     });
 
-    return embed;
-  }));
-
-  embeds.forEach((embed) => message.addEmbed(embed));
+    message.addEmbed(embed);
+  });
 
   return message;
 }
@@ -181,7 +183,7 @@ function assign({
           spot,
         );
 
-        const embed = await srch.characterEmbed(message, results[0], {
+        const embed = srch.characterEmbed(results[0], {
           mode: 'thumbnail',
           rating: new Rating({ stars: response.rating }),
           description: true,
@@ -322,7 +324,7 @@ function remove({ token, spot, userId, guildId }: {
           ).patch(token);
       }
 
-      const embed = await srch.characterEmbed(message, characters[0], {
+      const embed = srch.characterEmbed(characters[0], {
         mode: 'thumbnail',
         rating: new Rating({ stars: character.rating }),
         description: true,

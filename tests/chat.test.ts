@@ -101,12 +101,12 @@ Deno.test('/chat', async (test) => {
       assertEquals(message.json(), {
         type: 4,
         data: {
-          attachments: [{ filename: 'spinner3.gif', id: '0' }],
+          attachments: [],
           components: [],
           embeds: [{
             type: 'rich',
             image: {
-              url: 'attachment://spinner3.gif',
+              url: 'http://localhost:8000/assets/spinner3.gif',
             },
           }],
         },
@@ -128,7 +128,7 @@ Deno.test('/chat', async (test) => {
           ) as any,
         ),
         {
-          attachments: [{ filename: 'image-url.webp', id: '0' }],
+          attachments: [],
           components: [
             {
               type: 1,
@@ -153,7 +153,7 @@ Deno.test('/chat', async (test) => {
             {
               type: 'rich',
               author: {
-                icon_url: 'attachment://image-url.webp',
+                icon_url: 'image_url',
                 name: 'full name',
               },
               description: 't',
@@ -268,12 +268,12 @@ Deno.test('/chat', async (test) => {
       assertEquals(message.json(), {
         type: 4,
         data: {
-          attachments: [{ filename: 'spinner3.gif', id: '0' }],
+          attachments: [],
           components: [],
           embeds: [{
             type: 'rich',
             image: {
-              url: 'attachment://spinner3.gif',
+              url: 'http://localhost:8000/assets/spinner3.gif',
             },
           }],
         },
@@ -295,7 +295,7 @@ Deno.test('/chat', async (test) => {
           ) as any,
         ),
         {
-          attachments: [{ filename: 'image-url.webp', id: '0' }],
+          attachments: [],
           components: [
             {
               type: 1,
@@ -320,7 +320,7 @@ Deno.test('/chat', async (test) => {
             {
               type: 'rich',
               author: {
-                icon_url: 'attachment://image-url.webp',
+                icon_url: 'image_url',
                 name: 'full name',
               },
               description: 'hi hello',
@@ -337,7 +337,7 @@ Deno.test('/chat', async (test) => {
             {
               type: 'rich',
               author: {
-                icon_url: 'attachment://image-url.webp',
+                icon_url: 'image_url',
                 name: 'full name',
               },
               description: 't',
@@ -435,12 +435,12 @@ Deno.test('/chat', async (test) => {
       assertEquals(message.json(), {
         type: 4,
         data: {
-          attachments: [{ filename: 'spinner3.gif', id: '0' }],
+          attachments: [],
           components: [],
           embeds: [{
             type: 'rich',
             image: {
-              url: 'attachment://spinner3.gif',
+              url: 'http://localhost:8000/assets/spinner3.gif',
             },
           }],
         },
@@ -562,12 +562,12 @@ Deno.test('/chat', async (test) => {
       assertEquals(message.json(), {
         type: 4,
         data: {
-          attachments: [{ filename: 'spinner3.gif', id: '0' }],
+          attachments: [],
           components: [],
           embeds: [{
             type: 'rich',
             image: {
-              url: 'attachment://spinner3.gif',
+              url: 'http://localhost:8000/assets/spinner3.gif',
             },
           }],
         },
@@ -590,7 +590,7 @@ Deno.test('/chat', async (test) => {
         ),
         {
           components: [],
-          attachments: [{ filename: 'image-url.webp', id: '0' }],
+          attachments: [],
           embeds: [
             {
               type: 'rich',
@@ -606,7 +606,7 @@ Deno.test('/chat', async (test) => {
                 },
               ],
               thumbnail: {
-                url: 'attachment://image-url.webp',
+                url: 'http://localhost:8000/external/image_url?size=thumbnail',
               },
               footer: {
                 text: 'Male, 420',
@@ -688,12 +688,12 @@ Deno.test('/chat', async (test) => {
       assertEquals(message.json(), {
         type: 4,
         data: {
-          attachments: [{ filename: 'spinner3.gif', id: '0' }],
+          attachments: [],
           components: [],
           embeds: [{
             type: 'rich',
             image: {
-              url: 'attachment://spinner3.gif',
+              url: 'http://localhost:8000/assets/spinner3.gif',
             },
           }],
         },

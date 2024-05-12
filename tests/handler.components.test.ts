@@ -3799,13 +3799,13 @@ Deno.test('battle components', async (test) => {
       assertEquals({
         type: 7,
         data: {
-          attachments: [{ filename: 'spinner3.gif', id: '0' }],
+          attachments: [],
           components: [],
           embeds: [
             {
               type: 'rich',
               image: {
-                url: 'attachment://spinner3.gif',
+                url: 'http://localhost:8000/assets/spinner3.gif',
               },
             },
           ],

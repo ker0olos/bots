@@ -112,7 +112,7 @@ function pre({ token, userId, guildId, search, id }: {
         ),
       ]);
     })
-    .then(async ([character, existing]) => {
+    .then(([character, existing]) => {
       const message = new discord.Message();
 
       const characterId = `${character.packId}:${character.id}`;
@@ -128,7 +128,7 @@ function pre({ token, userId, guildId, search, id }: {
           ),
         );
 
-        const embed = await srch.characterEmbed(message, character, {
+        const embed = srch.characterEmbed(character, {
           footer: false,
           mode: 'thumbnail',
           description: false,
@@ -164,8 +164,6 @@ function pre({ token, userId, guildId, search, id }: {
         targetInventory.party.member5Id,
       ];
 
-      console.log(party, existing._id);
-
       const inactiveDays = getInactiveDays(targetInventory);
 
       if (party.some((id) => id?.equals(existing._id))) {
@@ -181,7 +179,7 @@ function pre({ token, userId, guildId, search, id }: {
             ),
           );
 
-          const embed = await srch.characterEmbed(message, character, {
+          const embed = srch.characterEmbed(character, {
             footer: true,
             mode: 'thumbnail',
             description: false,
@@ -195,7 +193,7 @@ function pre({ token, userId, guildId, search, id }: {
         }
       }
 
-      const embed = await srch.characterEmbed(message, character, {
+      const embed = srch.characterEmbed(character, {
         footer: true,
         rating: false,
         mode: 'thumbnail',
@@ -360,7 +358,7 @@ function attempt({
       try {
         await db.stealCharacter(userId, guildId, characterId);
 
-        const embed = await srch.characterEmbed(message, character, {
+        const embed = srch.characterEmbed(character, {
           footer: false,
           mode: 'thumbnail',
           description: false,
@@ -401,20 +399,16 @@ function attempt({
             ),
           );
 
-        const followupEmbed = await srch.characterEmbed(
-          followupMessage,
-          character,
-          {
-            footer: false,
-            mode: 'thumbnail',
-            description: false,
-            media: { title: true },
-            existing: {
-              rating: existing.rating,
-              mediaId: existing.mediaId,
-            },
+        const followupEmbed = srch.characterEmbed(character, {
+          footer: false,
+          mode: 'thumbnail',
+          description: false,
+          media: { title: true },
+          existing: {
+            rating: existing.rating,
+            mediaId: existing.mediaId,
           },
-        );
+        });
 
         followupEmbed.addField({
           value: `${discord.emotes.remove}`,
@@ -466,14 +460,14 @@ function attempt({
       await discord.Message.internal(refId).patch(token);
     });
 
-  const embed = new discord.Embed();
-  const loading = new discord.Message();
+  const loading = new discord.Message()
+    .addEmbed(
+      new discord.Embed().setImage(
+        { url: `${config.origin}/assets/steal.gif` },
+      ),
+    );
 
-  const image = embed.setImageFile('assets/public/steal.gif');
-
-  return loading
-    .addEmbed(embed)
-    .addAttachment(image);
+  return loading;
 }
 
 const steal = {

@@ -246,7 +246,7 @@ function pages(
             `- \`/search\` \`/anime\` \`/manga\` \`/series\`: _${
               i18n.get('/search', locale)
             }_`,
-            `- \`/character\` \`/char\`: _${i18n.get('/character', locale)}_`,
+            `- \`/character\`: _${i18n.get('/character', locale)}_`,
             '',
             `- \`/merge\` \`/synthesize\`: _${i18n.get('/merge', locale)}_`,
             '',

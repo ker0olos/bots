@@ -257,22 +257,18 @@ function nick({
 
         const name = packs.aliasToArray(character.name)[0];
 
-        const embed = await srch.characterEmbed(
-          message,
-          character,
-          {
-            footer: true,
-            rating: false,
-            mode: 'thumbnail',
-            description: false,
-            media: { title: true },
-            existing: {
-              ...response,
-              rating: undefined,
-              nickname: nick,
-            },
+        const embed = srch.characterEmbed(character, {
+          footer: true,
+          rating: false,
+          mode: 'thumbnail',
+          description: false,
+          media: { title: true },
+          existing: {
+            ...response,
+            rating: undefined,
+            nickname: nick,
           },
-        );
+        });
 
         message
           .addEmbed(
@@ -399,21 +395,17 @@ function image({
 
         const name = packs.aliasToArray(character.name)[0];
 
-        const embed = await srch.characterEmbed(
-          message,
-          character,
-          {
-            footer: true,
-            rating: false,
-            description: false,
-            media: { title: true },
-            existing: {
-              ...response,
-              rating: undefined,
-              image,
-            },
+        const embed = srch.characterEmbed(character, {
+          footer: true,
+          rating: false,
+          description: false,
+          media: { title: true },
+          existing: {
+            ...response,
+            rating: undefined,
+            image,
           },
-        );
+        });
 
         message
           .addEmbed(
@@ -555,17 +547,13 @@ function like({
             .setPing();
         }
 
-        const embed = await srch.characterEmbed(
-          message,
-          character,
-          {
-            footer: true,
-            description: false,
-            mode: 'thumbnail',
-            media: { title: true },
-            rating: true,
-          },
-        );
+        const embed = srch.characterEmbed(character, {
+          footer: true,
+          description: false,
+          mode: 'thumbnail',
+          media: { title: true },
+          rating: true,
+        });
 
         message.addEmbed(embed);
 
@@ -654,9 +642,7 @@ function likeall({
           media: results[0],
         });
 
-        const embed = await srch.mediaEmbed(message, media, {
-          mode: 'thumbnail',
-        });
+        const embed = srch.mediaEmbed(media, { mode: 'thumbnail' });
 
         message.addEmbed(embed);
 
@@ -827,7 +813,7 @@ function list({
             ),
           );
         } else {
-          embed = await srch.characterEmbed(message, _character[0], {
+          embed = srch.characterEmbed(_character[0], {
             media: { title: mediaTitle },
             existing: character,
           });
@@ -1539,7 +1525,7 @@ function logs({
       await discord.Message.internal(refId).patch(token);
     });
 
-  return discord.Message.spinner();
+  return discord.Message.spinner(true);
 }
 
 const user = {

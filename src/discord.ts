@@ -1,7 +1,3 @@
-import { basename, extname } from '$std/path/mod.ts';
-
-import { contentType } from '$std/media_types/mod.ts';
-
 import { json } from 'sift';
 
 import i18n from '~/src/i18n.ts';
@@ -525,10 +521,8 @@ export class Component {
 
 export class Embed {
   #data: EmbedInternal;
-  #files: File[];
 
   constructor(type: 'rich' = 'rich') {
-    this.#files = [];
     this.#data = { type };
   }
 
@@ -557,10 +551,17 @@ export class Embed {
     return this;
   }
 
+  proxy?: boolean;
   setAuthor(
-    author: { name?: string; url?: string; icon_url?: string; proxy?: boolean },
+    author: { name?: string; url?: string; icon_url?: string; proxy?: string },
   ): Embed {
     if (author.name) {
+      if (author.proxy && author.icon_url) {
+        author.icon_url = `${config.origin}/external/${
+          encodeURIComponent(author.icon_url ?? '')
+        }?size=preview`;
+      }
+
       this.#data.author = {
         ...author,
         // author name is limited to 256
@@ -597,68 +598,70 @@ export class Embed {
     return this.#data.fields?.length ?? 0;
   }
 
-  setImageUrl(url: string): Embed {
-    this.#data.image = { url };
+  setImage(image: {
+    url?: string;
+    default?: boolean;
+    proxy?: boolean;
+    size?: ImageSize;
+  }): Embed {
+    const size = image.size === ImageSize.Medium ? '?size=medium' : '';
+
+    image.default = image.default ?? true;
+    image.proxy = image.proxy ?? true;
+
+    if (image.url || image.default) {
+      if (
+        config.disableImagesProxy ||
+        image.url?.startsWith('attachment://') ||
+        (config.origin && image.url?.startsWith(config.origin) ||
+          (!image.default && !image.proxy))
+      ) {
+        this.#data.image = {
+          // deno-lint-ignore no-non-null-assertion
+          url: image.url!,
+        };
+      } else {
+        this.#data.image = {
+          url: `${config.origin}/external/${
+            encodeURIComponent(image.url ?? '')
+          }${size}`,
+        };
+      }
+    }
     return this;
   }
 
-  setThumbnailUrl(url: string): Embed {
-    this.#data.thumbnail = { url };
+  setThumbnail(
+    thumbnail: {
+      url?: string;
+      preview?: boolean;
+      default?: boolean;
+      proxy?: boolean;
+    },
+  ): Embed {
+    thumbnail.default = thumbnail.default ?? true;
+    thumbnail.proxy = thumbnail.proxy ?? true;
+
+    if (thumbnail.url || thumbnail.default) {
+      if (
+        config.disableImagesProxy ||
+        thumbnail.url?.startsWith('attachment://') ||
+        (config.origin && thumbnail.url?.startsWith(config.origin) ||
+          (!thumbnail.default && !thumbnail.proxy))
+      ) {
+        this.#data.thumbnail = {
+          // deno-lint-ignore no-non-null-assertion
+          url: thumbnail.url!,
+        };
+      } else {
+        this.#data.thumbnail = {
+          url: `${config.origin}/external/${
+            encodeURIComponent(thumbnail.url ?? '')
+          }?size=${thumbnail.preview ? 'preview' : 'thumbnail'}`,
+        };
+      }
+    }
     return this;
-  }
-
-  setImageFile(path: string): Attachment {
-    const filename = encodeURIComponent(basename(path));
-
-    const arrayBuffer = Deno.readFileSync(path);
-
-    this.#data.image = { url: `attachment://${filename}` };
-
-    const type = contentType(extname(path));
-
-    if (type) {
-      return { type, arrayBuffer, filename };
-    } else {
-      throw new Error(`${extname(path)}: unsupported`);
-    }
-  }
-
-  async setImageWithProxy(image: {
-    url?: string;
-    default?: boolean;
-    size?: ImageSize;
-  }): Promise<Attachment | undefined> {
-    image.default = image.default ?? true;
-
-    if (config.disableImagesProxy) {
-      // deno-lint-ignore no-non-null-assertion
-      this.#data.image = { url: image.url! };
-    } else {
-      const attachment = await utils.proxy(image.url, image.size);
-
-      this.#data.image = { url: `attachment://${attachment.filename}` };
-
-      return attachment;
-    }
-  }
-
-  async setThumbnailWithProxy(image: {
-    url?: string;
-    default?: boolean;
-    size?: ImageSize;
-  }): Promise<Attachment | undefined> {
-    image.default = image.default ?? true;
-
-    if (config.disableImagesProxy) {
-      // deno-lint-ignore no-non-null-assertion
-      this.#data.thumbnail = { url: image.url! };
-    } else {
-      const attachment = await utils.proxy(image.url, image.size);
-
-      this.#data.thumbnail = { url: `attachment://${attachment.filename}` };
-
-      return attachment;
-    }
   }
 
   setFooter(footer: { text?: string; icon_url?: string }): Embed {
@@ -668,7 +671,6 @@ export class Embed {
         text: utils.truncate(footer.text, 2048),
       };
     }
-
     return this;
   }
 
@@ -1011,16 +1013,12 @@ export class Message {
   }
 
   static spinner(landscape?: boolean): Message {
-    const embed = new Embed();
-    const loading = new Message();
-
-    const image = embed.setImageFile(
-      landscape ? 'assets/public/spinner3.gif' : 'assets/public/spinner.gif',
-    );
-
-    return loading
-      .addEmbed(embed)
-      .addAttachment(image);
+    return new Message()
+      .addEmbed(
+        new Embed().setImage(
+          { url: `${config.origin}/assets/spinner${landscape ? '3' : ''}.gif` },
+        ),
+      );
   }
 
   static page(

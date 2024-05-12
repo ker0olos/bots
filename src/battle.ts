@@ -603,7 +603,7 @@ function actionRound(
   embeds.forEach(addEmbed);
 }
 
-const addEmbed = async ({
+const addEmbed = ({
   message,
   subtitle,
   character,
@@ -661,7 +661,10 @@ const addEmbed = async ({
   });
 
   embed
-    .setImageUrl(`attachment://${uuid}.png`)
+    .setImage({ url: `attachment://${uuid}.png` })
+    .setThumbnail({
+      url: character.existing?.image ?? character.character.images?.[0]?.url,
+    })
     .setDescription(
       [
         `## ${
@@ -676,21 +679,8 @@ const addEmbed = async ({
       text: `${character.hp}/${character.maxHP}`,
     });
 
-  const thumbnail = await embed
-    .setImageWithProxy({
-      url: character.existing?.image ?? character.character.images?.[0]?.url,
-    });
-
   const left = Math.round((character.hp / character.maxHP) * 100);
   const _diff = Math.round((Math.abs(diff) / character.maxHP) * 100);
-
-  if (thumbnail) {
-    message.addAttachment({
-      type: thumbnail.type,
-      filename: thumbnail.filename,
-      arrayBuffer: thumbnail.arrayBuffer,
-    });
-  }
 
   message
     .addEmbed(embed)

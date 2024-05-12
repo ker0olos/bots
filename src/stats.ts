@@ -53,7 +53,7 @@ function view({ token, character, userId, guildId }: {
       if (!existing) {
         const message = new discord.Message();
 
-        const embed = await search.characterEmbed(message, character, {
+        const embed = search.characterEmbed(character, {
           mode: 'thumbnail',
           media: { title: false },
           description: false,
@@ -87,7 +87,7 @@ function view({ token, character, userId, guildId }: {
 
       const _skills = Object.entries(existing.combat?.skills ?? {});
 
-      const embed = await search.characterEmbed(message, character, {
+      const embed = search.characterEmbed(character, {
         footer: false,
         existing: {
           image: existing.image,

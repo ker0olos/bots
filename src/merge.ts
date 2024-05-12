@@ -7,7 +7,7 @@ import user from '~/src/user.ts';
 import gacha from '~/src/gacha.ts';
 
 import i18n from '~/src/i18n.ts';
-import utils, { ImageSize } from '~/src/utils.ts';
+import utils from '~/src/utils.ts';
 
 import db from '~/db/mod.ts';
 
@@ -166,11 +166,10 @@ function getSacrifices(
   };
 }
 
-async function characterPreview(
-  message: discord.Message,
+function characterPreview(
   character: Character,
   existing: Partial<CharacterWithId>,
-): Promise<discord.Embed> {
+): discord.Embed {
   const image = existing?.image
     ? { url: existing?.image }
     : character.images?.[0];
@@ -181,15 +180,8 @@ async function characterPreview(
     utils.wrap(existing?.nickname ?? packs.aliasToArray(character.name)[0])
   }`;
 
-  const embed = new discord.Embed();
-
-  const attachment = await embed
-    .setThumbnailWithProxy({
-      size: ImageSize.Preview,
-      url: image?.url,
-    });
-
-  message.addAttachment(attachment);
+  const embed = new discord.Embed()
+    .setThumbnail({ preview: true, url: image?.url });
 
   if (media) {
     embed.addField({
@@ -203,43 +195,42 @@ async function characterPreview(
   return embed;
 }
 
-function synthesize({ token, userId, guildId, mode, target }: {
+async function synthesize({ token, userId, guildId, mode, target }: {
   token: string;
   userId: string;
   guildId: string;
   mode: 'target' | 'min' | 'max';
   target?: number;
-}): discord.Message {
+}): Promise<discord.Message> {
   const locale = user.cachedUsers[userId]?.locale;
 
   if (!config.synthesis) {
     throw new NonFetalError(i18n.get('maintenance-merge', locale));
   }
 
-  // const message = new discord.Message();
-  synthesis.getFilteredCharacters({ userId, guildId })
-    .then(async (characters) => {
-      const message = new discord.Message();
+  const message = new discord.Message();
 
-      let { sacrifices, target: _target } = getSacrifices(
-        characters,
-        mode,
-        target,
-        locale,
-      );
+  const characters = await synthesis.getFilteredCharacters({ userId, guildId });
 
-      sacrifices = sacrifices
-        .sort((a, b) => b.rating - a.rating);
+  let { sacrifices, target: _target } = getSacrifices(
+    characters,
+    mode,
+    target,
+    locale,
+  );
 
-      // highlight the top characters
-      const highlights = sacrifices
-        .slice(0, 5);
+  sacrifices = sacrifices
+    .sort((a, b) => b.rating - a.rating);
 
-      const highlightedCharacters = await packs.characters({
-        ids: highlights.map((char) => char.characterId),
-        guildId,
-      });
+  // highlight the top characters
+  const highlights = sacrifices
+    .slice(0, 5);
 
+  packs.characters({
+    ids: highlights.map((char) => char.characterId),
+    guildId,
+  })
+    .then(async (highlightedCharacters) => {
       message.addEmbed(
         new discord.Embed().setDescription(
           i18n.get('merge-sacrifice', locale, sacrifices.length),
@@ -269,11 +260,7 @@ function synthesize({ token, userId, guildId, mode, target }: {
             continue;
           }
 
-          const embed = await synthesis.characterPreview(
-            message,
-            character,
-            existing,
-          );
+          const embed = synthesis.characterPreview(character, existing);
 
           message.addEmbed(embed);
         }

@@ -124,11 +124,12 @@ function packEmbed(pack: Pack): discord.Embed {
   const embed = new discord.Embed()
     .setFooter({ text: pack.manifest.author })
     .setDescription(pack.manifest.description)
+    .setThumbnail({
+      url: pack.manifest.image,
+      default: false,
+      proxy: false,
+    })
     .setTitle(pack.manifest.title ?? pack.manifest.id);
-
-  if (pack.manifest.image) {
-    embed.setThumbnailUrl(pack.manifest.image);
-  }
 
   return embed;
 }
