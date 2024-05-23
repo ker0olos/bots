@@ -609,12 +609,12 @@ export class Embed {
     image.default = image.default ?? true;
     image.proxy = image.proxy ?? true;
 
-    if (image.url || image.default) {
+    if (image.url || image.default || !image.proxy) {
       if (
         config.disableImagesProxy ||
         image.url?.startsWith('attachment://') ||
-        (config.origin && image.url?.startsWith(config.origin) ||
-          (!image.default && !image.proxy))
+        config.origin && image.url?.startsWith(config.origin) ||
+        !image.proxy
       ) {
         this.#data.image = {
           // deno-lint-ignore no-non-null-assertion
@@ -646,8 +646,8 @@ export class Embed {
       if (
         config.disableImagesProxy ||
         thumbnail.url?.startsWith('attachment://') ||
-        (config.origin && thumbnail.url?.startsWith(config.origin) ||
-          (!thumbnail.default && !thumbnail.proxy))
+        config.origin && thumbnail.url?.startsWith(config.origin) ||
+        !thumbnail.proxy
       ) {
         this.#data.thumbnail = {
           // deno-lint-ignore no-non-null-assertion

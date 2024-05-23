@@ -129,6 +129,15 @@ export const handler = async (r: Request) => {
     };
   }
 
+  // return new discord.Message()
+  //   .addEmbed(new discord.Embed()
+  //     .setImage({
+  //       proxy: false,
+  //       url:
+  //         'https://s4.anilist.co/file/anilistcdn/character/large/b138850-eqwZ11Q6sLrl.png',
+  //     }))
+  //   .send();
+
   try {
     switch (type) {
       case discord.InteractionType.Partial: {
